@@ -30,42 +30,34 @@ def validate_vae(model, dataset, num_images=25, is_cifar=False):
 def plot_images(input_images, pred_images, rand_labels, dataset, cols=6, is_cifar=False):
     rows = math.ceil(len(input_images * 2)/cols)
     plt.figure(figsize=(6, 12))
-    c = 1
     r = 1
     idx = 1
     while r <= rows:
-        while c <= cols or idx <= len(input_images):
-            # plot input image
-            plt.subplot(rows, cols, c)
-            plt.tight_layout()
-            img = denormalize(input_images[idx - 1].cpu(), is_cifar)
-            plt.imshow(img.permute(1, 2, 0), aspect='auto')
-            plt.title('-Input image-', fontsize=8)
-            plt.xticks([])
-            plt.yticks([])
-
-            # plot output image
-            lbl = rand_labels[idx - 1]
-            plt.subplot(rows, cols, c)
-            plt.tight_layout()
-            img = denormalize(pred_images[idx - 1].detach().cpu(), is_cifar)
-            plt.imshow(img.permute(1, 2, 0), aspect='auto')
-            if is_cifar:
-                lbl = dataset.classes[lbl]
-            plt.title('Input label: ' + str(lbl), fontsize=8)
-            plt.xticks([])
-            plt.yticks([])
+        c = 1
+        while c <= cols and idx <= len(input_images):
+            if c % 2 != 0:
+                # plot input image
+                plt.subplot(rows, cols, (r-1)*cols + c)
+                plt.tight_layout()
+                img = denormalize(input_images[idx - 1].cpu(), is_cifar)
+                plt.imshow(img.permute(1, 2, 0), aspect='auto')
+                plt.title('-Input image-', fontsize=8)
+                plt.xticks([])
+                plt.yticks([])
+            else:
+                # plot output image
+                lbl = rand_labels[idx - 1]
+                plt.subplot(rows, cols, (r-1)*cols + c)
+                plt.tight_layout()
+                img = denormalize(pred_images[idx - 1].detach().cpu(), is_cifar)
+                plt.imshow(img.permute(1, 2, 0), aspect='auto')
+                if is_cifar:
+                    lbl = dataset.classes[lbl]
+                plt.title('Input label: ' + str(lbl), fontsize=8)
+                plt.xticks([])
+                plt.yticks([])
+                idx += 1
             c += 1
-            idx += 1
-    r += 1
+        r += 1
 
     plt.show()
-
-
-
-
-
-
-
-
-
