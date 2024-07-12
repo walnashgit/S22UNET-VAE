@@ -133,38 +133,23 @@ class UNet(pl.LightningModule):
 
 
     def forward(self, x):
-        #print('Input x.shape: ', x.shape)
         # Contracting path
-        x, skip1 = self.contract1(x)    #skip1 : 64
-        #print('x.shape: ', x.shape, ' skip1.shape: ', skip1.shape)
+        x, skip1 = self.contract1(x)
 
-        x, skip2 = self.contract2(x)    #skip2 : 128
-        #print('x.shape: ', x.shape, ' skip2.shape: ', skip2.shape)
+        x, skip2 = self.contract2(x)
 
-        x, skip3 = self.contract3(x)    #skip3 : 256
-        #print('x.shape: ', x.shape, ' skip3.shape: ', skip3.shape)
+        x, skip3 = self.contract3(x)
 
-        x, _ = self.bottleneck(x)       #x :    256
-        #print('Bottelneck x.shape: ', x.shape)
+        x, _ = self.bottleneck(x)
         x = self.bottleneck2(x, None)
-        #print('Bottelneck2 x.shape: ', x.shape)
 
         # Expanding path
-        x = self.expand1(x, skip3)      #x: 512,
-        #print('x.shape: ', x.shape)
+        x = self.expand1(x, skip3)
         x = self.expand2(x, skip2)
-        #print('x.shape: ', x.shape)
 
         x = self.expand3(x, skip1)
-        #print('x.shape: ', x.shape)
 
         logits = self.final_conv(x)  #B, C, H, W
-
-        #x = x.view(x.size(0), -1)    #B, C
-
-        #x = F.softmax(x, dim=1)
-
-        #return x.view(x.size(0), self.out_channels, -1)
 
         return logits
 
@@ -214,7 +199,7 @@ class UNet(pl.LightningModule):
 
     def train_dataloader(self):
         if not self.trainer.train_dataloader:
-            self.trainer.reset_train_dataloader()
+            self.trainer.fit_loop.setup_data()
 
         return self.trainer.train_dataloader
 
