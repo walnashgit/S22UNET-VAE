@@ -8,7 +8,7 @@ from unet_model import UNet
 unet_config=dict(
     image_size=224,
     batch_size=32,
-    num_epochs=15
+    num_epochs=10
 )
 
 def init(
@@ -26,8 +26,8 @@ def init(
 ):
     model = UNet(in_channels, out_channels, max_lr, loss_fn, upsample, downsample)
 
-    # if show_summary:
-    #     summary(model.to(device), input_size=(in_channels, cfg['image_size'], cfg['image_size']))
+    if show_summary:
+        summary(model.to(device), input_size=(in_channels, cfg['image_size'], cfg['image_size']))
         # summary(model.to('mps'), input_size=(in_channels, cfg['image_size'], cfg['image_size']))
 
     trainer_args = dict(
